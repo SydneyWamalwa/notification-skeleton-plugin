@@ -16,18 +16,18 @@
 
 apply plugin: 'java'
 
-group = 'com.example.notification.template'
-version = '0.1-SNAPSHOT'
+group = 'com.matic.gocd.plugins'
+version = '0.1.0'
 
 // these values that go into plugin.xml
 project.ext.pluginDesc = [
-        id         : 'com.example.notification.systemout',
+        id         : 'com.matic.gocd.plugins.http-notifications',
         version    : project.version,
         goCdVersion: '16.2.1',
-        name       : 'Example Notification Plugin that prints to `System.out`',
-        description: 'Some longer description of your plugin goes here',
-        vendorName : 'Acme Corp',
-        vendorUrl  : 'https://github.com/user/repository'
+        name       : 'Send GoCD Notifications over HTTP',
+        description: 'Send GoCD Notifications as POST HTTP request to any number of endpoints',
+        vendorName : 'Matic Insurance Services Inc.',
+        vendorUrl  : 'https://github.com/matic-insurance/gocd-http-notifications-plugin'
 ]
 
 // Force 1.7 compatibility to ensure that it works with older JVMs
