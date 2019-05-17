@@ -22,6 +22,7 @@ import com.google.gson.GsonBuilder;
 import com.matic.gocd.plugins.RequestExecutor;
 import com.matic.gocd.plugins.settings.TopicNotificationSettings;
 import com.matic.gocd.plugins.utils.WebhookSender;
+import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
@@ -30,6 +31,7 @@ import java.util.HashMap;
 
 public class TopicStatusRequestExecutor implements RequestExecutor {
     private static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+    private static final Logger LOG = Logger.getLoggerFor(TopicStatusRequestExecutor.class);
 
     private final String requestBody;
     private final TopicNotificationSettings settings;
@@ -62,8 +64,11 @@ public class TopicStatusRequestExecutor implements RequestExecutor {
     private void sendNotification() {
         if (settings.isEnabled()) {
             for (String endpoint : settings.endpoints()) {
+                LOG.debug("Sending notification to: " + endpoint);
                 sender.send(endpoint, requestBody);
             }
+        } else {
+            LOG.debug("Notification Sending disabled");
         }
     }
 }

@@ -37,19 +37,16 @@ public class HttpNotifications implements GoPlugin {
     private static final Logger LOG = Logger.getLoggerFor(HttpNotifications.class);
     private static final String SETTINGS_ENV = "GOCD_HTTP_NOTIFICATIONS_CONFIG";
 
-    private GoApplicationAccessor accessor;
-    private PluginRequest pluginRequest;
     private NotificationSettings settings;
 
     @Override
     public void initializeGoApplicationAccessor(GoApplicationAccessor accessor) {
         readSettings();
-        this.accessor = accessor;
-        this.pluginRequest = new PluginRequest(accessor);
     }
 
     @Override
     public GoPluginApiResponse handle(GoPluginApiRequest request) throws UnhandledRequestTypeException {
+        maybeRefreshSettings();
         try {
             switch (Request.fromString(request.requestName())) {
                 case PLUGIN_SETTINGS_GET_VIEW:
@@ -57,8 +54,10 @@ public class HttpNotifications implements GoPlugin {
                 case REQUEST_NOTIFICATIONS_INTERESTED_IN:
                     return new NotificationInterestedInExecutor().execute();
                 case REQUEST_STAGE_STATUS:
+                    LOG.debug("Trying to send Stage notification");
                     return new TopicStatusRequestExecutor(settings.stage, request.requestBody()).execute();
                 case REQUEST_AGENT_STATUS:
+                    LOG.debug("Trying to send Agent notification");
                     return new TopicStatusRequestExecutor(settings.agent, request.requestBody()).execute();
                 case PLUGIN_SETTINGS_GET_CONFIGURATION:
                     return new GetPluginConfigurationExecutor().execute();
@@ -72,17 +71,25 @@ public class HttpNotifications implements GoPlugin {
         }
     }
 
+    private void maybeRefreshSettings() {
+        int chance = (int) (Math.random() * 100 + 1);
+        if (chance == 50) {
+            readSettings();
+        }
+    }
+
     @Override
     public GoPluginIdentifier pluginIdentifier() {
         return PLUGIN_IDENTIFIER;
     }
 
     private void readSettings() {
+        String path = System.getenv(SETTINGS_ENV);
         try {
-            String path = System.getenv(SETTINGS_ENV);
+            LOG.info("Reading settings from ENV("+SETTINGS_ENV+"):"+path);
             this.settings = NotificationSettings.forPath(path);
         } catch (IOException e) {
-            LOG.error("Can read settings from ENV("+SETTINGS_ENV+")", e);
+            LOG.error("Can read settings from ENV("+SETTINGS_ENV+"):"+path, e);
         } finally {
             this.settings = NotificationSettings.defaultSettings();
         }
