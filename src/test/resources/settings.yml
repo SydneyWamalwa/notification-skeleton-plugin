@@ -3,6 +3,5 @@ agent_status:
   endpoints: []
 
 stage_status:
-  enabled: true
-  endpoints:
-    - https://quoting-st1.matic.com
+  enabled: false
+  endpoints: []

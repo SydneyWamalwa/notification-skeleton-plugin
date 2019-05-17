@@ -16,6 +16,7 @@
 
 package com.matic.gocd.plugins.executors;
 
+import com.matic.gocd.plugins.settings.NotificationSettings;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -27,7 +28,8 @@ public class StageStatusRequestExecutorTest {
 
     @Test
     public void shouldRenderASuccessResponseIfNotificationWasSent() throws Exception {
-        GoPluginApiResponse response = new StageStatusRequestExecutor("{}") {
+        NotificationSettings settings = NotificationSettings.defaultSettings();
+        GoPluginApiResponse response = new StageStatusRequestExecutor(settings, "{}") {
             @Override
             protected void sendNotification() {
                 // do nothing!
@@ -40,7 +42,8 @@ public class StageStatusRequestExecutorTest {
 
     @Test
     public void shouldRenderAnErrorResponseIfNotificationWasNotSent() throws Exception {
-        GoPluginApiResponse response = new StageStatusRequestExecutor(null) {
+        NotificationSettings settings = NotificationSettings.defaultSettings();
+        GoPluginApiResponse response = new StageStatusRequestExecutor(settings,null) {
             @Override
             protected void sendNotification() {
                 throw new RuntimeException("Boom!");

@@ -16,14 +16,14 @@
 
 package com.matic.gocd.plugins.requests;
 
-import com.matic.gocd.plugins.PluginRequest;
-import com.matic.gocd.plugins.RequestExecutor;
-import com.matic.gocd.plugins.executors.StageStatusRequestExecutor;
-import com.matic.gocd.plugins.utils.DefaultDateTypeAdapter;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
+import com.matic.gocd.plugins.PluginRequest;
+import com.matic.gocd.plugins.RequestExecutor;
+import com.matic.gocd.plugins.executors.StageStatusRequestExecutor;
+import com.matic.gocd.plugins.utils.DefaultDateTypeAdapter;
 
 import java.util.Date;
 import java.util.List;
@@ -44,7 +44,7 @@ public class StageStatusRequest {
     }
 
     public RequestExecutor executor(PluginRequest pluginRequest) {
-        return new StageStatusRequestExecutor(null);
+        return new StageStatusRequestExecutor(null, null);
     }
 
     public static class Pipeline {

@@ -16,11 +16,11 @@
 
 package com.matic.gocd.plugins.executors;
 
-import com.matic.gocd.plugins.RequestExecutor;
-import com.matic.gocd.plugins.settings.NotificationSettings;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.matic.gocd.plugins.RequestExecutor;
+import com.matic.gocd.plugins.settings.NotificationSettings;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -30,20 +30,22 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class StageStatusRequestExecutor implements RequestExecutor {
     private static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
 
     private final String requestBody;
+    private final NotificationSettings settings;
 
-    public StageStatusRequestExecutor(String requestBody) {
+    public StageStatusRequestExecutor(NotificationSettings settings, String requestBody) {
+        this.settings = settings;
         this.requestBody = requestBody;
     }
 
     @Override
-    public GoPluginApiResponse execute() throws Exception {
+    public GoPluginApiResponse execute() {
         HashMap<String, Object> responseJson = new HashMap<>();
         try {
             sendNotification();
@@ -51,13 +53,12 @@ public class StageStatusRequestExecutor implements RequestExecutor {
         } catch (Exception e) {
             e.printStackTrace();
             responseJson.put("status", "failure");
-            responseJson.put("messages", Arrays.asList(e.getMessage()));
+            responseJson.put("messages", Collections.singletonList(e.getMessage()));
         }
         return new DefaultGoPluginApiResponse(200, GSON.toJson(responseJson));
     }
 
     protected void sendNotification() throws Exception {
-        NotificationSettings settings = NotificationSettings.fromEnvironmentVariable();
         if (settings.stage.isEnabled()) {
             System.out.println("eeeee");
             for (String endpoint : settings.stage.endpoints()) {

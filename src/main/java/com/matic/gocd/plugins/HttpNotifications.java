@@ -18,6 +18,7 @@ package com.matic.gocd.plugins;
 
 import com.matic.gocd.plugins.executors.*;
 import com.matic.gocd.plugins.requests.StageStatusRequest;
+import com.matic.gocd.plugins.settings.NotificationSettings;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
 import com.thoughtworks.go.plugin.api.GoPlugin;
 import com.thoughtworks.go.plugin.api.GoPluginIdentifier;
@@ -27,18 +28,23 @@ import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
+import java.io.IOException;
+
 import static com.matic.gocd.plugins.Constants.PLUGIN_IDENTIFIER;
 
 @Extension
 public class HttpNotifications implements GoPlugin {
 
-    public static final Logger LOG = Logger.getLoggerFor(HttpNotifications.class);
+    private static final Logger LOG = Logger.getLoggerFor(HttpNotifications.class);
+    private static final String SETTINGS_ENV = "GOCD_HTTP_NOTIFICATIONS_CONFIG";
 
     private GoApplicationAccessor accessor;
     private PluginRequest pluginRequest;
+    private NotificationSettings settings;
 
     @Override
     public void initializeGoApplicationAccessor(GoApplicationAccessor accessor) {
+        readSettings();
         this.accessor = accessor;
         this.pluginRequest = new PluginRequest(accessor);
     }
@@ -54,7 +60,7 @@ public class HttpNotifications implements GoPlugin {
                 case REQUEST_STAGE_STATUS:
                     return StageStatusRequest.fromJSON(request.requestBody()).executor(pluginRequest).execute();
                 case REQUEST_AGENT_STATUS:
-                    return new StageStatusRequestExecutor(request.requestBody()).execute();
+                    return new StageStatusRequestExecutor(settings, request.requestBody()).execute();
                 case PLUGIN_SETTINGS_GET_CONFIGURATION:
                     return new GetPluginConfigurationExecutor().execute();
                 case PLUGIN_SETTINGS_VALIDATE_CONFIGURATION:
@@ -70,5 +76,16 @@ public class HttpNotifications implements GoPlugin {
     @Override
     public GoPluginIdentifier pluginIdentifier() {
         return PLUGIN_IDENTIFIER;
+    }
+
+    private void readSettings() {
+        try {
+            String path = System.getenv(SETTINGS_ENV);
+            this.settings = NotificationSettings.forPath(path);
+        } catch (IOException e) {
+            LOG.error("Can read settings from ENV("+SETTINGS_ENV+")", e);
+        } finally {
+            this.settings = NotificationSettings.defaultSettings();
+        }
     }
 }
