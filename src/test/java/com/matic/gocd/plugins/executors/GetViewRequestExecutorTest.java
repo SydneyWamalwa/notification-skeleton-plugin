@@ -42,12 +42,9 @@ public class GetViewRequestExecutorTest {
     public void allFieldsShouldBePresentInView() throws Exception {
         String template = Util.readResource("/plugin-settings.template.html");
 
-        for (Map.Entry<String, Field> fieldEntry : GetPluginConfigurationExecutor.FIELDS.entrySet()) {
-            assertThat(template, containsString("ng-model=\"" + fieldEntry.getKey() + "\""));
-            assertThat(template, containsString("<span class=\"form_error\" ng-show=\"GOINPUTNAME[" + fieldEntry.getKey() +
-                    "].$error.server\">{{GOINPUTNAME[" + fieldEntry.getKey() +
-                    "].$error.server}}</span>"));
-        }
+        assertThat(template, containsString("<div class=\"form_item_block\">\n" +
+                "  Plugin is configured by YML files. Read more at <a href=\"https://github.com/matic-insurance/gocd-http-notifications-plugin\">github</a>\n" +
+                "</div>"));
     }
 
 }

@@ -35,7 +35,7 @@ public class GetPluginConfigurationExecutorTest {
         HashMap hashMap = new Gson().fromJson(response.responseBody(), HashMap.class);
         assertEquals("Are you using anonymous inner classes — see https://github.com/google/gson/issues/298",
                 hashMap.size(),
-                GetPluginConfigurationExecutor.FIELDS.size()
+                0
         );
     }
 
@@ -44,32 +44,7 @@ public class GetPluginConfigurationExecutorTest {
         GoPluginApiResponse response = new GetPluginConfigurationExecutor().execute();
 
         assertThat(response.responseCode(), CoreMatchers.is(200));
-        String expectedJSON = "{\n" +
-                "  \"go_server_url\": {\n" +
-                "    \"display-name\": \"Go Server URL\",\n" +
-                "    \"required\": true,\n" +
-                "    \"secure\": false,\n" +
-                "    \"display-order\": \"0\"\n" +
-                "  },\n" +
-                "  \"api_url\": {\n" +
-                "    \"display-name\": \"API URL\",\n" +
-                "    \"required\": true,\n" +
-                "    \"secure\": false,\n" +
-                "    \"display-order\": \"1\"\n" +
-                "  },\n" +
-                "  \"api_user\": {\n" +
-                "    \"display-name\": \"API User\",\n" +
-                "    \"required\": true,\n" +
-                "    \"secure\": false,\n" +
-                "    \"display-order\": \"2\"\n" +
-                "  },\n" +
-                "  \"api_key\": {\n" +
-                "    \"display-name\": \"API Key\",\n" +
-                "    \"required\": true,\n" +
-                "    \"secure\": false,\n" +
-                "    \"display-order\": \"3\"\n" +
-                "  }\n" +
-                "}";
+        String expectedJSON = "{}";
 
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), true);
     }

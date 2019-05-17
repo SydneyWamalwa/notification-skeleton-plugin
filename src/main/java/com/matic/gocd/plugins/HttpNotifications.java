@@ -16,12 +16,8 @@
 
 package com.matic.gocd.plugins;
 
-import com.matic.gocd.plugins.executors.GetPluginConfigurationExecutor;
-import com.matic.gocd.plugins.executors.GetViewRequestExecutor;
-import com.matic.gocd.plugins.executors.NotificationInterestedInExecutor;
-import com.matic.gocd.plugins.executors.StageStatusRequestExecutor;
+import com.matic.gocd.plugins.executors.*;
 import com.matic.gocd.plugins.requests.StageStatusRequest;
-import com.matic.gocd.plugins.requests.ValidatePluginSettings;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
 import com.thoughtworks.go.plugin.api.GoPlugin;
 import com.thoughtworks.go.plugin.api.GoPluginIdentifier;
@@ -62,7 +58,7 @@ public class HttpNotifications implements GoPlugin {
                 case PLUGIN_SETTINGS_GET_CONFIGURATION:
                     return new GetPluginConfigurationExecutor().execute();
                 case PLUGIN_SETTINGS_VALIDATE_CONFIGURATION:
-                    return ValidatePluginSettings.fromJSON(request.requestBody()).executor().execute();
+                    return new ValidateConfigurationExecutor().execute();
                 default:
                     throw new UnhandledRequestTypeException(request.requestName());
             }

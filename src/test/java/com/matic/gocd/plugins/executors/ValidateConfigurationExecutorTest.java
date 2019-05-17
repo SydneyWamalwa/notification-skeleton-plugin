@@ -16,7 +16,6 @@
 
 package com.matic.gocd.plugins.executors;
 
-import com.matic.gocd.plugins.requests.ValidatePluginSettings;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -26,39 +25,8 @@ import static org.junit.Assert.assertThat;
 
 public class ValidateConfigurationExecutorTest {
     @Test
-    public void shouldValidateABadConfiguration() throws Exception {
-        ValidatePluginSettings settings = new ValidatePluginSettings();
-        GoPluginApiResponse response = new ValidateConfigurationExecutor(settings).execute();
-
-        assertThat(response.responseCode(), is(200));
-        JSONAssert.assertEquals("[\n" +
-                "  {\n" +
-                "    \"message\": \"Go Server URL must not be blank.\",\n" +
-                "    \"key\": \"go_server_url\"\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"message\": \"API URL must not be blank.\",\n" +
-                "    \"key\": \"api_url\"\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"message\": \"API User must not be blank.\",\n" +
-                "    \"key\": \"api_user\"\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"message\": \"API Key must not be blank.\",\n" +
-                "    \"key\": \"api_key\"\n" +
-                "  }\n" +
-                "]", response.responseBody(), true);
-    }
-
-    @Test
     public void shouldValidateAGoodConfiguration() throws Exception {
-        ValidatePluginSettings settings = new ValidatePluginSettings();
-        settings.put("api_url", "https://api.example.com");
-        settings.put("api_user", "bob");
-        settings.put("api_key", "p@ssw0rd");
-        settings.put("go_server_url", "https://ci.example.com");
-        GoPluginApiResponse response = new ValidateConfigurationExecutor(settings).execute();
+        GoPluginApiResponse response = new ValidateConfigurationExecutor().execute();
 
         assertThat(response.responseCode(), is(200));
         JSONAssert.assertEquals("[]", response.responseBody(), true);

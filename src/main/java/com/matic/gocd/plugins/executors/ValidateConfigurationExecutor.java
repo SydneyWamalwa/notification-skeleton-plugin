@@ -17,35 +17,11 @@
 package com.matic.gocd.plugins.executors;
 
 import com.matic.gocd.plugins.RequestExecutor;
-import com.matic.gocd.plugins.requests.ValidatePluginSettings;
-import com.google.gson.Gson;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
-import java.util.ArrayList;
-import java.util.Map;
-
 public class ValidateConfigurationExecutor implements RequestExecutor {
-    private static final Gson GSON = new Gson();
-
-    private final ValidatePluginSettings settings;
-
-    public ValidateConfigurationExecutor(ValidatePluginSettings settings) {
-        this.settings = settings;
-    }
-
     public GoPluginApiResponse execute() {
-        ArrayList<Map<String, String>> result = new ArrayList<>();
-
-        for (Map.Entry<String, Field> entry : GetPluginConfigurationExecutor.FIELDS.entrySet()) {
-            Field field = entry.getValue();
-            Map<String, String> validationError = field.validate(settings.get(entry.getKey()));
-
-            if (!validationError.isEmpty()) {
-                result.add(validationError);
-            }
-        }
-
-        return DefaultGoPluginApiResponse.success(GSON.toJson(result));
+        return DefaultGoPluginApiResponse.success("[]");
     }
 }
