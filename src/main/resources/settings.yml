@@ -1,0 +1,7 @@
+agent_status:
+  enabled: false
+  endpoints: []
+
+stage_status:
+  enabled: true
+  endpoints: []

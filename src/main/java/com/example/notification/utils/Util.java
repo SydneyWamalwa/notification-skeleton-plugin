@@ -25,6 +25,8 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.Properties;
 
+import static com.google.common.io.Resources.getResource;
+
 public class Util {
     public static String readResource(String resourceFile) {
         try (InputStreamReader reader = new InputStreamReader(GetViewRequestExecutor.class.getResourceAsStream(resourceFile), Charsets.UTF_8)) {
@@ -32,6 +34,10 @@ public class Util {
         } catch (IOException e) {
             throw new RuntimeException("Could not find resource " + resourceFile, e);
         }
+    }
+
+    public static String getFilePath(String resourceFile) {
+        return Util.class.getResource(resourceFile).getFile();
     }
 
     public static String pluginId() {

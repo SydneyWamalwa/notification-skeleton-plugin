@@ -16,9 +16,11 @@
 
 package com.example.notification;
 
+import com.amihaiemil.eoyaml.YamlMapping;
 import com.example.notification.executors.GetPluginConfigurationExecutor;
 import com.example.notification.executors.GetViewRequestExecutor;
 import com.example.notification.executors.NotificationInterestedInExecutor;
+import com.example.notification.executors.StageStatusRequestExecutor;
 import com.example.notification.requests.AgentStatusRequest;
 import com.example.notification.requests.StageStatusRequest;
 import com.example.notification.requests.ValidatePluginSettings;
@@ -58,7 +60,7 @@ public class ExamplePlugin implements GoPlugin {
                 case REQUEST_STAGE_STATUS:
                     return StageStatusRequest.fromJSON(request.requestBody()).executor(pluginRequest).execute();
                 case REQUEST_AGENT_STATUS:
-                    return AgentStatusRequest.fromJSON(request.requestBody()).executor(pluginRequest).execute();
+                    return new StageStatusRequestExecutor(request.requestBody()).execute();
                 case PLUGIN_SETTINGS_GET_CONFIGURATION:
                     return new GetPluginConfigurationExecutor().execute();
                 case PLUGIN_SETTINGS_VALIDATE_CONFIGURATION:

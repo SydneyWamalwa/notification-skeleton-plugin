@@ -16,27 +16,30 @@
 
 package com.example.notification.executors;
 
-import com.example.notification.PluginRequest;
 import com.example.notification.RequestExecutor;
-import com.example.notification.requests.StageStatusRequest;
+import com.example.notification.settings.NotificationSettings;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 
 public class StageStatusRequestExecutor implements RequestExecutor {
     private static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
 
-    private final StageStatusRequest request;
-    private final PluginRequest pluginRequest;
+    private final String requestBody;
 
-    public StageStatusRequestExecutor(StageStatusRequest request, PluginRequest pluginRequest) {
-        this.request = request;
-        this.pluginRequest = pluginRequest;
+    public StageStatusRequestExecutor(String requestBody) {
+        this.requestBody = requestBody;
     }
 
     @Override
@@ -46,6 +49,7 @@ public class StageStatusRequestExecutor implements RequestExecutor {
             sendNotification();
             responseJson.put("status", "success");
         } catch (Exception e) {
+            e.printStackTrace();
             responseJson.put("status", "failure");
             responseJson.put("messages", Arrays.asList(e.getMessage()));
         }
@@ -53,9 +57,28 @@ public class StageStatusRequestExecutor implements RequestExecutor {
     }
 
     protected void sendNotification() throws Exception {
-        // TODO: Implement this. The request.pipeline object has all the details about the pipeline, materials, stages and jobs
-        // If you need access to settings like API keys, URLs, then call PluginRequest#getPluginSettings
-//        PluginSettings pluginSettings = pluginRequest.getPluginSettings();
-        throw new UnsupportedOperationException();
+        NotificationSettings settings = NotificationSettings.fromEnvironmentVariable();
+        if (settings.stage.isEnabled()) {
+            System.out.println("eeeee");
+            for (String endpoint : settings.stage.endpoints()) {
+                sendHttpNotification(endpoint);
+            }
+        }
+    }
+
+    private void sendHttpNotification(String endpoint) throws IOException {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        StringEntity requestEntity = new StringEntity(
+                requestBody,
+                ContentType.APPLICATION_JSON);
+
+        HttpPost postMethod = new HttpPost(endpoint);
+        postMethod.setEntity(requestEntity);
+
+        try {
+            httpClient.execute(postMethod);
+        } finally {
+            httpClient.close();
+        }
     }
 }

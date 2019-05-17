@@ -44,7 +44,7 @@ public class StageStatusRequest {
     }
 
     public RequestExecutor executor(PluginRequest pluginRequest) {
-        return new StageStatusRequestExecutor(this, pluginRequest);
+        return new StageStatusRequestExecutor(null);
     }
 
     public static class Pipeline {
