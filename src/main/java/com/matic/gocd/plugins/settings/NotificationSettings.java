@@ -19,7 +19,7 @@ public class NotificationSettings {
         try {
             return new TopicNotificationSettings(mapping.yamlMapping(topic));
         } catch (IllegalStateException e) {
-            return new EmptyTopicSettings();
+            return new TopicNotificationSettings();
         }
     }
 

@@ -20,28 +20,29 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.matic.gocd.plugins.RequestExecutor;
-import com.matic.gocd.plugins.settings.NotificationSettings;
+import com.matic.gocd.plugins.settings.TopicNotificationSettings;
+import com.matic.gocd.plugins.utils.WebhookSender;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class StageStatusRequestExecutor implements RequestExecutor {
+public class TopicStatusRequestExecutor implements RequestExecutor {
     private static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
 
     private final String requestBody;
-    private final NotificationSettings settings;
+    private final TopicNotificationSettings settings;
+    private final WebhookSender sender;
 
-    public StageStatusRequestExecutor(NotificationSettings settings, String requestBody) {
+    public TopicStatusRequestExecutor(TopicNotificationSettings settings, String requestBody) {
+        this(settings, requestBody, new WebhookSender());
+    }
+
+    public TopicStatusRequestExecutor(TopicNotificationSettings settings, String requestBody, WebhookSender sender) {
         this.settings = settings;
         this.requestBody = requestBody;
+        this.sender = sender;
     }
 
     @Override
@@ -58,28 +59,11 @@ public class StageStatusRequestExecutor implements RequestExecutor {
         return new DefaultGoPluginApiResponse(200, GSON.toJson(responseJson));
     }
 
-    protected void sendNotification() throws Exception {
-        if (settings.stage.isEnabled()) {
-            System.out.println("eeeee");
-            for (String endpoint : settings.stage.endpoints()) {
-                sendHttpNotification(endpoint);
+    private void sendNotification() {
+        if (settings.isEnabled()) {
+            for (String endpoint : settings.endpoints()) {
+                sender.send(endpoint, requestBody);
             }
-        }
-    }
-
-    private void sendHttpNotification(String endpoint) throws IOException {
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        StringEntity requestEntity = new StringEntity(
-                requestBody,
-                ContentType.APPLICATION_JSON);
-
-        HttpPost postMethod = new HttpPost(endpoint);
-        postMethod.setEntity(requestEntity);
-
-        try {
-            httpClient.execute(postMethod);
-        } finally {
-            httpClient.close();
         }
     }
 }

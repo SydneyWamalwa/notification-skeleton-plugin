@@ -17,7 +17,6 @@
 package com.matic.gocd.plugins;
 
 import com.matic.gocd.plugins.executors.*;
-import com.matic.gocd.plugins.requests.StageStatusRequest;
 import com.matic.gocd.plugins.settings.NotificationSettings;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
 import com.thoughtworks.go.plugin.api.GoPlugin;
@@ -58,9 +57,9 @@ public class HttpNotifications implements GoPlugin {
                 case REQUEST_NOTIFICATIONS_INTERESTED_IN:
                     return new NotificationInterestedInExecutor().execute();
                 case REQUEST_STAGE_STATUS:
-                    return StageStatusRequest.fromJSON(request.requestBody()).executor(pluginRequest).execute();
+                    return new TopicStatusRequestExecutor(settings.stage, request.requestBody()).execute();
                 case REQUEST_AGENT_STATUS:
-                    return new StageStatusRequestExecutor(settings, request.requestBody()).execute();
+                    return new TopicStatusRequestExecutor(settings.agent, request.requestBody()).execute();
                 case PLUGIN_SETTINGS_GET_CONFIGURATION:
                     return new GetPluginConfigurationExecutor().execute();
                 case PLUGIN_SETTINGS_VALIDATE_CONFIGURATION:

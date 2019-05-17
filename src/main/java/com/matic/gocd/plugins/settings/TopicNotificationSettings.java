@@ -1,6 +1,5 @@
 package com.matic.gocd.plugins.settings;
 
-import com.amihaiemil.eoyaml.Yaml;
 import com.amihaiemil.eoyaml.YamlMapping;
 import com.amihaiemil.eoyaml.YamlSequence;
 
@@ -8,31 +7,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TopicNotificationSettings {
-    private final YamlMapping mapping;
+    private boolean enabled;
+    private List<String> endpoints;
+
+    TopicNotificationSettings() {
+        this.enabled = false;
+        this.endpoints = new ArrayList<>();
+    }
 
     TopicNotificationSettings(YamlMapping mapping) {
-        if (mapping == null) {
-            mapping = Yaml.createYamlMappingBuilder().build();
+        this();
+        if (mapping != null) {
+            parseSettings(mapping);
         }
-        this.mapping = mapping;
     }
 
     public boolean isEnabled() {
-        return Boolean.valueOf(mapping.string("enabled"));
+        return enabled;
     }
 
-    public List<String> endpoints() {
-        YamlSequence sequence = mapping.yamlSequence("endpoints");
-        if (sequence == null) {
-            return new ArrayList<>();
-        }
-        return parseSequence(sequence);
+    public List<String> endpoints() { return endpoints; }
+
+    private void parseSettings(YamlMapping mapping) {
+        this.enabled = Boolean.valueOf(mapping.string("enabled"));
+        this.endpoints = parseSequence(mapping.yamlSequence("endpoints"));
     }
 
     private List<String> parseSequence(YamlSequence sequence) {
         ArrayList<String> strings = new ArrayList<>();
-        for (int i = 0; i < sequence.size(); i++) {
-            strings.add(sequence.string(i));
+        if (sequence != null) {
+            for (int i = 0; i < sequence.size(); i++) {
+                strings.add(sequence.string(i));
+            }
         }
         return strings;
     }
