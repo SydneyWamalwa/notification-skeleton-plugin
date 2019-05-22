@@ -64,11 +64,11 @@ public class TopicStatusRequestExecutor implements RequestExecutor {
     private void sendNotification() {
         if (settings.isEnabled()) {
             for (String endpoint : settings.endpoints()) {
-                LOG.debug("Sending notification to: " + endpoint);
+                LOG.info("Sending notification to: " + endpoint);
                 sender.send(endpoint, requestBody);
             }
         } else {
-            LOG.debug("Notification Sending disabled");
+            LOG.info("Notification Sending disabled");
         }
     }
 }

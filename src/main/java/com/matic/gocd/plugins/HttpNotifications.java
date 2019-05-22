@@ -54,10 +54,10 @@ public class HttpNotifications implements GoPlugin {
                 case REQUEST_NOTIFICATIONS_INTERESTED_IN:
                     return new NotificationInterestedInExecutor().execute();
                 case REQUEST_STAGE_STATUS:
-                    LOG.debug("Trying to send Stage notification");
+                    LOG.info("Trying to send Stage notification");
                     return new TopicStatusRequestExecutor(settings.stage, request.requestBody()).execute();
                 case REQUEST_AGENT_STATUS:
-                    LOG.debug("Trying to send Agent notification");
+                    LOG.info("Trying to send Agent notification");
                     return new TopicStatusRequestExecutor(settings.agent, request.requestBody()).execute();
                 case PLUGIN_SETTINGS_GET_CONFIGURATION:
                     return new GetPluginConfigurationExecutor().execute();
