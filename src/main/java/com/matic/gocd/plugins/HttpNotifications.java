@@ -90,7 +90,6 @@ public class HttpNotifications implements GoPlugin {
             this.settings = NotificationSettings.forPath(path);
         } catch (IOException e) {
             LOG.error("Can read settings from ENV("+SETTINGS_ENV+"):"+path, e);
-        } finally {
             this.settings = NotificationSettings.defaultSettings();
         }
     }
