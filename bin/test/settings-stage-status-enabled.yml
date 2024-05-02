@@ -1,0 +1,5 @@
+stage_status:
+  enabled: true
+  endpoints:
+    - http://agent.status/endpoint1
+    - http://agent.status/endpoint2
