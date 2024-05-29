@@ -22,11 +22,20 @@ import com.google.gson.GsonBuilder;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 public class GetPluginConfigurationExecutor implements RequestExecutor {
     public GoPluginApiResponse execute() {
+        Map<String, Object> responseMap= new HashMap<>();
+
+        responseMap.put("zulip_api_url", "https://kibo1.zulipchat.com/api/v1/messages");
+        responseMap.put("zulip_api_key", "FKuUSbOEq7BnPYUgZurCE5k9z1udaXsf");
+        responseMap.put("zulip_stream", "https://kibo1.zulipchat.com/api/v1/external/gocd?api_key=yvXJHBQ60GALLRf5Ajbdhyviww32W10o&stream=436003");
+
+        Gson gson=new GsonBuilder().create();
+        String responseBody=gson.toJson(responseMap);
+
         return new DefaultGoPluginApiResponse(200, "{}");
     }
 }

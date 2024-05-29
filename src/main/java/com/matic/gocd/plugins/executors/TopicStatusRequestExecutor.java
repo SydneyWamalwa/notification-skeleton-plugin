@@ -62,13 +62,24 @@ public class TopicStatusRequestExecutor implements RequestExecutor {
     }
 
     private void sendNotification() {
+        try{
+            if(settings==null){
+                LOG.error("Notification settings is null!");
+                return;
+            }
+
         if (settings.isEnabled()) {
             for (String endpoint : settings.endpoints()) {
                 LOG.info("Sending notification to: " + endpoint);
                 sender.send(endpoint, requestBody);
             }
+            LOG.info("Notification sent successfully.");
         } else {
             LOG.info("Notification Sending disabled");
         }
+    }catch (Exception e){
+        LOG.error("Failed to send Notification: " + e.getMessage(), e);
+        }
     }
+
 }

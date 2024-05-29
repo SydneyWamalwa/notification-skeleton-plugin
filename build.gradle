@@ -21,13 +21,13 @@ version = '0.1.2'
 
 // these values that go into plugin.xml
 project.ext.pluginDesc = [
-        id         : 'com.matic.gocd.plugins.http-notifications',
-        version    : project.version,
-        goCdVersion: '16.2.1',
-        name       : 'Send GoCD Notifications over HTTP',
-        description: 'Send GoCD Notifications as POST HTTP request to any number of endpoints',
-        vendorName : 'Matic Insurance Services Inc.',
-        vendorUrl  : 'https://github.com/matic-insurance/gocd-http-notifications-plugin'
+    id         : 'com.matic.gocd.plugins.http-notifications',
+    version    : project.version,
+    goCdVersion: '16.2.1',
+    name       : 'Send GoCD Notifications over HTTP',
+    description: 'Send GoCD Notifications as POST HTTP request to any number of endpoints',
+    vendorName : 'Matic Insurance Services Inc.',
+    vendorUrl  : 'https://github.com/matic-insurance/gocd-http-notifications-plugin'
 ]
 
 // Force 1.7 compatibility to ensure that it works with older JVMs
@@ -47,7 +47,7 @@ dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '23.0'
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
     compile group: 'com.mashape.unirest', name: 'unirest-java', version: '1.4.9'
-    compile group: 'com.amihaiemil.web', name: 'eo-yaml', version: '2.0.1'
+    compile group: 'com.amihaiemil.web', name: 'eo-yaml', version: '5.1.3'
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.mockito', name: 'mockito-core', version: '2.+'
@@ -73,3 +73,5 @@ jar {
         into "lib/"
     }
 }
+
+
